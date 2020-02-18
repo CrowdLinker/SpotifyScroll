@@ -1,22 +1,12 @@
 import React from 'react';
 import {View, Animated, SafeAreaView, TouchableOpacity} from 'react-native';
 
-function logScrollValue({value}) {
-  console.warn({scrollValue: value});
-}
-
 function PlaylistProfile() {
   // this will track the scroll value of the Animated.ScrollView
   // use a ref so it doesn't get reset on rerenders
   const scrollY = React.useRef(new Animated.Value(0));
 
-  React.useEffect(() => {
-    const listener = scrollY.current.addListener(logScrollValue);
-
-    return () => {
-      scrollY.current.removeListener(listener);
-    };
-  });
+  const clampHeroSection = scrollY.current;
 
   // standard boilerplate for listening to scroll events
   // useNativeDriver means the scroll value will be updated on the native thread (more efficient)
@@ -33,15 +23,27 @@ function PlaylistProfile() {
       <Animated.ScrollView onScroll={handleScroll} style={{flex: 1}}>
         <SearchPlaylists />
 
-        <PlaylistHero>
-          <View style={{height: 180, width: 180, backgroundColor: 'gray'}} />
-        </PlaylistHero>
+        <TranslationContainer translateY={clampHeroSection}>
+          <PlaylistHero>
+            <View style={{height: 180, width: 180, backgroundColor: 'gray'}} />
+          </PlaylistHero>
+        </TranslationContainer>
 
         <PlaylistItems>
           <ShufflePlayButton />
         </PlaylistItems>
       </Animated.ScrollView>
     </SafeAreaView>
+  );
+}
+
+// a wrapper component for translating position with animated values
+// doesn't do much, but it cleans up the markup a little bit
+function TranslationContainer({children, translateY}: any) {
+  return (
+    <Animated.View style={{transform: [{translateY}]}}>
+      {children}
+    </Animated.View>
   );
 }
 
@@ -113,7 +115,7 @@ function ShufflePlayButton({children}: any) {
         height: SHUFFLE_PLAY_BUTTON_HEIGHT,
         width: 220,
         borderRadius: 30,
-        backgroundColor: 'springgreen',
+        backgroundColor: '#1DB954',
       }}>
       {children}
     </TouchableOpacity>
