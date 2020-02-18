@@ -57,6 +57,11 @@ function PlaylistProfile() {
     }),
   );
 
+  const headerTitleOpacity = scrollY.current.interpolate({
+    inputRange: [0, PLAYLIST_ITEMS_OFFSET / 2, PLAYLIST_ITEMS_OFFSET],
+    outputRange: [0, 0, 1],
+  });
+
   // standard boilerplate for listening to scroll events
   // useNativeDriver means the scroll value will be updated on the native thread (more efficient)
   // this limits what you can do with the Animated.Value - style properties are restricted to transform and opacity
@@ -67,7 +72,15 @@ function PlaylistProfile() {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Header />
+      <Header>
+        <Animated.Text
+          style={{
+            fontSize: 18,
+            fontWeight: '700',
+            textAlign: 'center',
+            opacity: headerTitleOpacity,
+          }}>{`Hey, Ma Radio`}</Animated.Text>
+      </Header>
 
       <Animated.ScrollView
         contentOffset={{y: searchLayout.height}}
