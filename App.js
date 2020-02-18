@@ -1,12 +1,36 @@
 import React from 'react';
 import {View, Animated, SafeAreaView, TouchableOpacity} from 'react-native';
 
+function logScrollValue({value}) {
+  console.warn({scrollValue: value});
+}
+
 function PlaylistProfile() {
+  // this will track the scroll value of the Animated.ScrollView
+  // use a ref so it doesn't get reset on rerenders
+  const scrollY = React.useRef(new Animated.Value(0));
+
+  React.useEffect(() => {
+    const listener = scrollY.current.addListener(logScrollValue);
+
+    return () => {
+      scrollY.current.removeListener(listener);
+    };
+  });
+
+  // standard boilerplate for listening to scroll events
+  // useNativeDriver means the scroll value will be updated on the native thread (more efficient)
+  // this limits what you can do with the Animated.Value - style properties are restricted to transform and opacity
+  const handleScroll = Animated.event(
+    [{nativeEvent: {contentOffset: {y: scrollY.current}}}],
+    {useNativeDriver: true},
+  );
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header />
 
-      <Animated.ScrollView style={{flex: 1}}>
+      <Animated.ScrollView onScroll={handleScroll} style={{flex: 1}}>
         <SearchPlaylists />
 
         <PlaylistHero>
