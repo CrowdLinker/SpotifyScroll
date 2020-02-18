@@ -1,5 +1,15 @@
 import React from 'react';
-import {View, Animated, SafeAreaView, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Animated,
+  SafeAreaView,
+  TouchableOpacity,
+  Text,
+  Switch,
+  Button,
+  TextInput,
+  StyleSheet,
+} from 'react-native';
 
 function PlaylistProfile() {
   // this will track the scroll value of the Animated.ScrollView
@@ -84,12 +94,28 @@ function TranslationContainer({children, translateY}: any) {
 
 // any calculations involving the intrinsic height of a view (in later steps) will be calculated using the onLayout prop -- if this sounds confusing, it will be explained in a later step - dont worry about it for now
 
-const HEADER_HEIGHT = 40;
+const HEADER_HEIGHT = 60;
 
 function Header({children}: any) {
   return (
-    <View style={{height: HEADER_HEIGHT, backgroundColor: 'aquamarine'}}>
-      {children}
+    <View>
+      <View
+        style={{
+          height: HEADER_HEIGHT,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingHorizontal: 10,
+        }}>
+        <View style={{flex: 1, alignItems: 'flex-start'}}>
+          <Button title="Back" onPress={console.log} />
+        </View>
+
+        <View style={{flex: 3}}>{children}</View>
+        <View style={{flex: 1, alignItems: 'flex-end'}}>
+          <Button title="..." onPress={console.log} />
+        </View>
+      </View>
     </View>
   );
 }
@@ -98,8 +124,47 @@ const SEARCH_PLAYLISTS_HEIGHT = 50;
 
 function SearchPlaylists({children}: any) {
   return (
-    <View style={{height: SEARCH_PLAYLISTS_HEIGHT, backgroundColor: 'coral'}}>
-      {children}
+    <View
+      style={{
+        height: SEARCH_PLAYLISTS_HEIGHT,
+        backgroundColor: 'white',
+      }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+        }}>
+        <TextInput
+          style={{
+            flex: 1,
+            borderRadius: 4,
+            paddingVertical: 15,
+            fontSize: 16,
+            fontWeight: '600',
+            marginRight: 20,
+          }}
+          placeholder="Find in playlist"
+        />
+        <TouchableOpacity
+          style={{
+            borderRadius: 4,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: 'rgba(0,0,0,0.5)',
+            justifyContent: 'center',
+            paddingHorizontal: 10,
+            alignSelf: 'center',
+          }}>
+          <Text
+            style={{
+              fontSize: 16,
+              lineHeight: 32,
+              fontWeight: '600',
+            }}>
+            Filters
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -121,8 +186,45 @@ function PlaylistHero({children}: any) {
 
 function PlaylistItems({children}: any) {
   return (
-    <View style={{height: 1200, backgroundColor: 'rebeccapurple'}}>
-      {children}
+    <View
+      style={{
+        backgroundColor: 'white',
+      }}>
+      <View style={{zIndex: 2}}>{children}</View>
+      <View
+        style={{
+          padding: 20,
+          zIndex: 1,
+          marginTop: -SHUFFLE_PLAY_BUTTON_OFFSET,
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 10,
+          }}>
+          <Text style={{fontSize: 16, fontWeight: 'bold'}}>Download</Text>
+          <Switch />
+        </View>
+        {playlistItems.map(item => (
+          <PlaylistRow key={`${item.id}`} playlistItem={item} />
+        ))}
+        {playlistItems.map(item => (
+          <PlaylistRow key={`${item.id}`} playlistItem={item} />
+        ))}
+        {playlistItems.map(item => (
+          <PlaylistRow key={`${item.id}`} playlistItem={item} />
+        ))}
+        {playlistItems.map(item => (
+          <PlaylistRow key={`${item.id}`} playlistItem={item} />
+        ))}
+        {playlistItems.map(item => (
+          <PlaylistRow key={`${item.id}`} playlistItem={item} />
+        ))}
+        {playlistItems.map(item => (
+          <PlaylistRow key={`${item.id}`} playlistItem={item} />
+        ))}
+      </View>
     </View>
   );
 }
@@ -134,7 +236,7 @@ const SHUFFLE_PLAY_BUTTON_OFFSET = SHUFFLE_PLAY_BUTTON_HEIGHT / 2;
 
 function ShufflePlayButton({children}: any) {
   return (
-    <TouchableOpacity
+    <View
       style={{
         transform: [
           {
@@ -142,14 +244,41 @@ function ShufflePlayButton({children}: any) {
             translateY: -SHUFFLE_PLAY_BUTTON_OFFSET,
           },
         ],
-        alignSelf: 'center',
-        height: SHUFFLE_PLAY_BUTTON_HEIGHT,
-        width: 220,
-        borderRadius: 30,
-        backgroundColor: 'springgreen',
       }}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '50%',
+          backgroundColor: 'white',
+        }}
+      />
+
+      <TouchableOpacity
+        style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          height: SHUFFLE_PLAY_BUTTON_HEIGHT,
+          width: 220,
+          borderRadius: 30,
+          backgroundColor: '#1DB954',
+        }}>
+        <Text
+          style={{
+            textAlign: 'center',
+            textTransform: 'uppercase',
+            color: 'white',
+            fontWeight: '700',
+            fontSize: 18,
+            letterSpacing: 1.25,
+          }}>
+          Shuffle Play
+        </Text>
+      </TouchableOpacity>
       {children}
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -158,3 +287,75 @@ function App() {
 }
 
 export default App;
+
+function PlaylistRow({playlistItem}: {playlistItem: IPlaylistItem}) {
+  return (
+    <View style={{marginBottom: 20}}>
+      <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+        {playlistItem.song}
+      </Text>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Text style={{fontWeight: '500', color: 'rgba(0,0,0,0.6)'}}>
+          {playlistItem.artist}
+        </Text>
+        <View
+          style={{
+            width: 4,
+            height: 4,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            borderRadius: 2,
+            marginHorizontal: 4,
+          }}
+        />
+        <Text style={{fontWeight: '500', color: 'rgba(0,0,0,0.6)'}}>
+          {playlistItem.album}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const playlistItems: IPlaylistItem[] = [
+  {
+    id: 0,
+    song: `Scott Street`,
+    artist: `Phoebe Bridgers`,
+    album: `Stranger in the Alps`,
+  },
+  {
+    id: 1,
+    song: `Don't Miss It`,
+    artist: `James Blake`,
+    album: `Assume Form`,
+  },
+  {
+    id: 2,
+    song: `Unbearably White`,
+    artist: `Vampire Weekend`,
+    album: `Father of the Bride`,
+  },
+  {
+    id: 3,
+    song: `If You Need To, Keep Time On Me`,
+    artist: `Fleet Foxes`,
+    album: `Crack-Up`,
+  },
+  {
+    id: 4,
+    song: `Small Worlds`,
+    artist: `Rayland Baxter`,
+    album: `Good Mmornin`,
+  },
+  {
+    id: 5,
+    song: `Re: Stacks`,
+    artist: `Bon Iver`,
+    album: `For Emma, Forever Ago`,
+  },
+  {
+    id: 6,
+    song: `Souther Nights`,
+    artist: `Whitney`,
+    album: `Light Upon the Lake: Demo Recordings`,
+  },
+];
