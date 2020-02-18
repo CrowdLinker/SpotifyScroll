@@ -46,7 +46,10 @@ function PlaylistProfile() {
     <SafeAreaView style={{flex: 1}}>
       <Header />
 
-      <Animated.ScrollView onScroll={handleScroll} style={{flex: 1}}>
+      <Animated.ScrollView
+        contentOffset={{y: SEARCH_PLAYLISTS_HEIGHT}}
+        onScroll={handleScroll}
+        style={{flex: 1}}>
         <SearchPlaylists />
 
         <TranslationContainer translateY={clampHeroSection}>
@@ -143,7 +146,7 @@ function ShufflePlayButton({children}: any) {
         height: SHUFFLE_PLAY_BUTTON_HEIGHT,
         width: 220,
         borderRadius: 30,
-        backgroundColor: 'springgreen',
+        backgroundColor: '#1DB954',
       }}>
       {children}
     </TouchableOpacity>
