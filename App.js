@@ -6,7 +6,19 @@ function PlaylistProfile() {
   // use a ref so it doesn't get reset on rerenders
   const scrollY = React.useRef(new Animated.Value(0));
 
-  const clampHeroSection = scrollY.current;
+  const clampHeroSection = Animated.add(
+    // we want to make the hero section maintain its position on scroll
+    // we can do this by setting its translateY value to whatever the scroll value is
+    scrollY.current,
+    // shift it up by subtracting points until we've scrolled beyond the search section, and clamp it after that
+    scrollY.current.interpolate({
+      inputRange: [0, SEARCH_PLAYLISTS_HEIGHT],
+      outputRange: [0, -SEARCH_PLAYLISTS_HEIGHT],
+      // we also want it to shift down when the user pulls down, so we clamp the above range with 'extrapolateRight'
+      // using just 'extrapolate' would clamp the scroll value in both directions
+      extrapolateRight: 'clamp',
+    }),
+  );
 
   // standard boilerplate for listening to scroll events
   // useNativeDriver means the scroll value will be updated on the native thread (more efficient)
