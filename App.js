@@ -46,7 +46,10 @@ function PlaylistProfile() {
     <SafeAreaView style={{flex: 1}}>
       <Header />
 
-      <Animated.ScrollView onScroll={handleScroll} style={{flex: 1}}>
+      <Animated.ScrollView
+        contentOffset={{y: SEARCH_PLAYLISTS_HEIGHT}}
+        onScroll={handleScroll}
+        style={{flex: 1}}>
         <SearchPlaylists />
 
         <TranslationContainer translateY={clampHeroSection}>
