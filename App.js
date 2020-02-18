@@ -9,12 +9,25 @@ import {
   Button,
   TextInput,
   StyleSheet,
+  LayoutRectangle,
 } from 'react-native';
+
+const EMPTY_RECT = {
+  x: 0,
+  y: 0,
+  width: 0,
+  // default to some value so we're not interpolating by negative values below
+  // these update onLayout anyways
+  height: 100,
+};
 
 function PlaylistProfile() {
   // this will track the scroll value of the Animated.ScrollView
   // use a ref so it doesn't get reset on rerenders
   const scrollY = React.useRef(new Animated.Value(0));
+
+  const [searchLayout, setSearchLayout] = React.useState(EMPTY_RECT);
+  const [heroLayout, setHeroLayout] = React.useState(EMPTY_RECT);
 
   const clampHeroSection = Animated.add(
     // we want to make the hero section maintain its position on scroll
@@ -22,15 +35,15 @@ function PlaylistProfile() {
     scrollY.current,
     // shift it up by subtracting points until we've scrolled beyond the search section, and clamp it after that
     scrollY.current.interpolate({
-      inputRange: [0, SEARCH_PLAYLISTS_HEIGHT],
-      outputRange: [0, -SEARCH_PLAYLISTS_HEIGHT],
+      inputRange: [0, searchLayout.height],
+      outputRange: [0, -searchLayout.height],
       // we also want it to shift down when the user pulls down, so we clamp the above range with 'extrapolateRight'
       // using just 'extrapolate' would clamp the scroll value in both directions
       extrapolateRight: 'clamp',
     }),
   );
 
-  const PLAYLIST_ITEMS_OFFSET = PLAYLIST_HERO_HEIGHT + SEARCH_PLAYLISTS_HEIGHT;
+  const PLAYLIST_ITEMS_OFFSET = heroLayout.height + searchLayout.height;
 
   const clampShuffleButton = Animated.add(
     // make the button maintain its position during scroll - i.e the center of the window
@@ -57,15 +70,21 @@ function PlaylistProfile() {
       <Header />
 
       <Animated.ScrollView
-        contentOffset={{y: SEARCH_PLAYLISTS_HEIGHT}}
+        contentOffset={{y: searchLayout.height}}
         onScroll={handleScroll}
         style={{flex: 1}}>
-        <SearchPlaylists />
+        <View onLayout={({nativeEvent: {layout}}) => setSearchLayout(layout)}>
+          <SearchPlaylists />
+        </View>
 
         <TranslationContainer translateY={clampHeroSection}>
-          <PlaylistHero>
-            <View style={{height: 180, width: 180, backgroundColor: 'gray'}} />
-          </PlaylistHero>
+          <View onLayout={({nativeEvent: {layout}}) => setHeroLayout(layout)}>
+            <PlaylistHero>
+              <View
+                style={{height: 180, width: 180, backgroundColor: 'gray'}}
+              />
+            </PlaylistHero>
+          </View>
         </TranslationContainer>
 
         <PlaylistItems>
@@ -101,7 +120,6 @@ function Header({children}: any) {
     <View>
       <View
         style={{
-          height: HEADER_HEIGHT,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-around',
@@ -126,7 +144,6 @@ function SearchPlaylists({children}: any) {
   return (
     <View
       style={{
-        height: SEARCH_PLAYLISTS_HEIGHT,
         backgroundColor: 'white',
       }}>
       <View
@@ -176,7 +193,7 @@ function PlaylistHero({children}: any) {
     <View
       style={{
         padding: 10,
-        height: PLAYLIST_HERO_HEIGHT,
+        minHeight: PLAYLIST_HERO_HEIGHT,
         alignItems: 'center',
       }}>
       {children}
