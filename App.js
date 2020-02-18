@@ -20,6 +20,20 @@ function PlaylistProfile() {
     }),
   );
 
+  const PLAYLIST_ITEMS_OFFSET = PLAYLIST_HERO_HEIGHT + SEARCH_PLAYLISTS_HEIGHT;
+
+  const clampShuffleButton = Animated.add(
+    // make the button maintain its position during scroll - i.e the center of the window
+    scrollY.current,
+    // if we havent scrolled past the hero section, have the shuffle button move up with the scrollview
+    scrollY.current.interpolate({
+      inputRange: [0, PLAYLIST_ITEMS_OFFSET - SHUFFLE_PLAY_BUTTON_OFFSET],
+      outputRange: [0, -PLAYLIST_ITEMS_OFFSET + SHUFFLE_PLAY_BUTTON_OFFSET],
+      // after reaching the ~300 points translation, maintain the position at the top
+      extrapolateRight: 'clamp',
+    }),
+  );
+
   // standard boilerplate for listening to scroll events
   // useNativeDriver means the scroll value will be updated on the native thread (more efficient)
   // this limits what you can do with the Animated.Value - style properties are restricted to transform and opacity
@@ -42,7 +56,9 @@ function PlaylistProfile() {
         </TranslationContainer>
 
         <PlaylistItems>
-          <ShufflePlayButton />
+          <TranslationContainer translateY={clampShuffleButton}>
+            <ShufflePlayButton />
+          </TranslationContainer>
         </PlaylistItems>
       </Animated.ScrollView>
     </SafeAreaView>
@@ -127,7 +143,7 @@ function ShufflePlayButton({children}: any) {
         height: SHUFFLE_PLAY_BUTTON_HEIGHT,
         width: 220,
         borderRadius: 30,
-        backgroundColor: 'springgreen',
+        backgroundColor: '#1DB954',
       }}>
       {children}
     </TouchableOpacity>
